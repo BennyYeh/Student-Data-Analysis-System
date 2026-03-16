@@ -16,6 +16,10 @@ Python GUI application for student data analysis.
 - Matplotlib
 - Tkinter
 - SQLite
+- 
+## Screenshot
+
+![Dashboard](gui.png)
 
 ## How to Run
 
