@@ -21,6 +21,12 @@ Python GUI application for student data analysis.
 
 ![Dashboard](gui.png)
 
+## To Fix / Improvements
+
+- Improve generate data module
+- Add more flexible data generation options
+- Improve error handling when generating data
+
 ## How to Run
 
 ```bash
