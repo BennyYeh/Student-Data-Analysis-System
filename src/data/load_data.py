@@ -15,3 +15,4 @@ def load_csv_to_db():
     )
 
     print("資料匯入成功")
+    return df

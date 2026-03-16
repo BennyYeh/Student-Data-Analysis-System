@@ -10,7 +10,7 @@ def show_menu(root, frame, df, status_var):
     for w in frame.winfo_children():
         w.destroy()
 
-    ttk.Label(frame, text="學生資料系統", font=("Arial",20)).pack(pady=20)
+    ttk.Label(frame, text="學生資料系統", font=("Arial", 20)).pack(pady=20)
 
     ttk.Button(
         frame,

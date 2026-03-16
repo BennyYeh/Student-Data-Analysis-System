@@ -1,10 +1,9 @@
-#處理資料來源
 import pandas as pd
 import ttkbootstrap as ttk
 from tkinter import filedialog, messagebox
 from src.data.generate_data import generate_student_data
-from src.data.load_data import load_csv_to_db
 from src.database.db_connection import connect_db
+from src.data.load_data import load_csv_to_db
 
 
 def show_data_source(root, frame, status_var):
@@ -28,10 +27,13 @@ def show_data_source(root, frame, status_var):
         for w in frame.winfo_children():
             w.destroy()
 
-        ttk.Label(frame, text="輸入生成資料筆數").pack(pady=10, padx=10)
+        center_frame = ttk.Frame(frame)
+        center_frame.pack(expand=True)
 
-        entry = ttk.Entry(frame)
-        entry.pack()
+        ttk.Label(center_frame, text="輸入生成資料筆數", font=("Arial",20)).pack(pady=10)
+
+        entry = ttk.Entry(center_frame)
+        entry.pack(pady=5)
 
         def generate():
 
@@ -39,21 +41,23 @@ def show_data_source(root, frame, status_var):
 
             try:
                 n = int(entry.get())
-
-                generate_student_data(n)
-                df = load_csv_to_db()
-
-                status_var.set(f"狀態: 成功生成 {n} 筆資料")
-
-                show_menu(root, frame, df, status_var)
-
-            except:
+            except ValueError:
                 status_var.set("狀態: 請輸入正確數字")
+                return
 
-        ttk.Button(frame, text="確認生成", command=generate).pack(pady=10)
+            generate_student_data(n)
+
+            df = load_csv_to_db()
+
+            status_var.set(f"狀態: 成功生成 {n} 筆資料")
+
+            show_menu(root, frame, df, status_var)
+
+
+        ttk.Button(center_frame, text="確認生成", command=generate).pack(pady=10)
 
         ttk.Button(
-            frame,
+            center_frame,
             text="返回",
             command=lambda: show_data_source(root, frame, status_var)
         ).pack(pady=10)
@@ -80,8 +84,6 @@ def show_data_source(root, frame, status_var):
 
         show_menu(root, frame, df, status_var)
 
-
-
     # =========================
     # 匯入 Excel
     # =========================
@@ -90,25 +92,25 @@ def show_data_source(root, frame, status_var):
 
         from src.gui.menu_page import show_menu
 
-        file = filedialog.askopenfilename(
-            filetypes=[("Excel", "*.xlsx")]
+        file = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx")])
+
+        if not file:
+            return
+
+        df = pd.read_excel(file)
+
+        df.to_sql(
+            "students",
+            connect_db(),
+            if_exists="replace",
+            index=False
         )
 
-        if file:
-            df = pd.read_excel(file)
+        messagebox.showinfo("成功", "Excel 匯入成功")
 
-            df.to_sql(
-                "students",
-                connect_db(),
-                if_exists="replace",
-                index=False
-            )
+        status_var.set("狀態: Excel 匯入成功")
 
-            messagebox.showinfo("成功", "Excel 匯入成功")
-
-            status_var.set("狀態: Excel 匯入成功")
-
-            show_menu(root, frame, df, status_var)
+        show_menu(root, frame, df, status_var)
 
     # =========================
     # 按鈕區
